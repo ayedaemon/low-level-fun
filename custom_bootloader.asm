@@ -1,24 +1,25 @@
-	
+bits 16      ; BIOS works in 16 bit mode
+org 0x7c00   ; MBR is loaded at 0x7c00 memory location
 
-; Setup TTY mode
 mov ax, 0x03
 int 10h
 
 
-mov si, msg      ; si register now points to msg
-mov ah, 0Eh      ; Use write function from 10h interrupt
+mov si, msg
+mov ah, 0Eh
 
 .loop:
-    lodsb          ; load first char from msg and point to next char
-    or al, al      ; Check if end of string
-    jz halt        ; if end of string, jump to halt
-    int 10h        ; else, print char via interrupt
-    jmp .loop      ; loop
+    lodsb
+    or al, al
+    jz halt
+    int 10h
+    jmp .loop
 
 halt:
+cli     ; disable further interrupts
+hlt     ; halt
 
-msg: db "Hack the world", 0
+msg: db "Hack the world!!", 0
 
 times 510-($-$$) db 0
 dw 0xAA55
-
